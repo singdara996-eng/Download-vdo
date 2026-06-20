@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeloYT - Premium YouTube Downloader</title>
+    <!-- Outfit Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="background-glows">
+        <div class="glow glow-1"></div>
+        <div class="glow glow-2"></div>
+        <div class="glow glow-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <i data-lucide="play" class="icon-play"></i>
+                </div>
+                <h1>Velo<span>YT</span></h1>
+            </div>
+            <p class="subtitle">Download YouTube videos in high quality with lightspeed performance</p>
+            <div id="ffmpeg-badge" class="badge checking">
+                <i data-lucide="cpu"></i>
+                <span>Checking FFmpeg status...</span>
+            </div>
+        </header>
+
+        <!-- Main Input Card -->
+        <main class="main-card">
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <i data-lucide="link" class="input-icon"></i>
+                    <input type="text" id="youtube-url" placeholder="Paste YouTube link here..." autocomplete="off">
+                    <button id="clear-btn" class="clear-btn" style="display: none;">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <button id="fetch-btn" class="btn btn-primary">
+                    <i data-lucide="search"></i>
+                    <span>Fetch Details</span>
+                </button>
+            </div>
+            <div id="input-error" class="error-msg" style="display: none;"></div>
+        </main>
+
+        <!-- Loading Spinner -->
+        <div id="loading-spinner" class="loading-container" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing video streams...</p>
+        </div>
+
+        <!-- Video Info & Download Config Card -->
+        <section id="video-card" class="video-card" style="display: none;">
+            <div class="video-grid">
+                <div class="video-thumbnail-container">
+                    <img id="video-thumb" src="" alt="Thumbnail">
+                    <span id="video-duration" class="duration-tag">00:00</span>
+                </div>
+                <div class="video-details">
+                    <h2 id="video-title">Video Title</h2>
+                    <p id="video-uploader" class="uploader-name">
+                        <i data-lucide="users"></i>
+                        <span>Channel Name</span>
+                    </p>
+                    
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <i data-lucide="eye"></i>
+                            <span id="video-views">0</span> views
+                        </div>
+                        <div class="stat-item">
+                            <i data-lucide="thumbs-up"></i>
+                            <span id="video-likes">0</span> likes
+                        </div>
+                    </div>
+
+                    <div class="download-controls">
+                        <div class="form-group">
+                            <label for="format-select">Select Quality</label>
+                            <div class="select-wrapper">
+                                <select id="format-select">
+                                    <!-- Dynamic options -->
+                                </select>
+                                <i data-lucide="chevron-down" class="select-arrow"></i>
+                            </div>
+                        </div>
+
+                        <button id="download-btn" class="btn btn-download">
+                            <i data-lucide="download"></i>
+                            <span>Start Download</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Download Progress Card -->
+        <section id="progress-card" class="progress-card" style="display: none;">
+            <div class="progress-header">
+                <div class="progress-title-area">
+                    <div class="pulse-dot"></div>
+                    <h3>Downloading: <span id="progress-video-title">Video...</span></h3>
+                </div>
+                <span id="progress-percent" class="percent-tag">0%</span>
+            </div>
+            
+            <div class="progress-bar-wrapper">
+                <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+            </div>
+
+            <div class="progress-stats">
+                <div class="prog-stat">
+                    <span class="label">Speed</span>
+                    <span id="progress-speed" class="value">0 KB/s</span>
+                </div>
+                <div class="prog-stat">
+                    <span class="label">ETA</span>
+                    <span id="progress-eta" class="value">00:00</span>
+                </div>
+                <div class="prog-stat">
+                    <span class="label">Downloaded</span>
+                    <span id="progress-size" class="value">0 MB / 0 MB</span>
+                </div>
+                <div class="prog-stat">
+                    <span class="label">Format</span>
+                    <span id="progress-format" class="value">Standard</span>
+                </div>
+            </div>
+            
+            <div id="status-message" class="status-msg">
+                Downloading files to your standard Windows Downloads folder.
+            </div>
+        </section>
+
+        <!-- History/Recent Card -->
+        <section class="history-card">
+            <div class="history-header">
+                <div class="title-with-icon">
+                    <i data-lucide="history"></i>
+                    <h2>Recent Downloads</h2>
+                </div>
+                <button id="open-folder-btn" class="btn btn-secondary">
+                    <i data-lucide="folder-open"></i>
+                    <span>Open Downloads Folder</span>
+                </button>
+            </div>
+            
+            <div id="history-list" class="history-list">
+                <!-- Dynamic history list -->
+                <div class="history-empty">
+                    <i data-lucide="folder-heart"></i>
+                    <p>No downloads yet. Paste a link above to start downloading!</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast" style="display: none;">
+        <i data-lucide="info" id="toast-icon"></i>
+        <span id="toast-text">Message goes here</span>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=1.2"></script>
+    <script>
+        // Initialize Lucide icons on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
