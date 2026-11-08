@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: Download-vdo
+    env: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
